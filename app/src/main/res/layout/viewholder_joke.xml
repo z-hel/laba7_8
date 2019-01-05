@@ -4,7 +4,7 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="70dp">
 
     <TextView
             android:id="@+id/type_joke"
@@ -23,19 +23,23 @@
             android:layout_width="wrap_content"
             android:layout_height="0dp"
             app:layout_constraintTop_toBottomOf="@id/type_joke"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0"
             tools:text="setup"
             app:layout_constraintStart_toStartOf="@+id/type_joke"
-            app:layout_constraintEnd_toEndOf="@+id/type_joke"/>
+            />
     <TextView
             android:id="@+id/punchline_joke"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
             app:layout_constraintTop_toBottomOf="@id/setup_joke"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginBottom="8dp"
             tools:text="punchline"
+            app:layout_constraintHorizontal_bias="0"
             app:layout_constraintStart_toStartOf="@+id/type_joke"
-            app:layout_constraintEnd_toEndOf="@+id/type_joke"/>
+            />
 
     <ImageView
             android:id="@+id/line"
