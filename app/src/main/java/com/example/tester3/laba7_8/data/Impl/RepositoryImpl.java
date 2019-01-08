@@ -14,10 +14,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -27,6 +24,8 @@ import java.util.List;
 public class RepositoryImpl implements Repository {
     private static Context context;
     private static String json;
+    private static final String BASE_URL =
+            "https://official-joke-api.herokuapp.com"; // + /random_ten
 
     public RepositoryImpl(Context context) {
         this.context = context;
@@ -35,73 +34,48 @@ public class RepositoryImpl implements Repository {
     @Override
     public List<Joke> getJokes() {
 
-        GsonBuilder builder = new GsonBuilder();
-        Gson gson = builder.create();
-        Type listType = new TypeToken<ArrayList<Joke>>() {
-        }.getType();
-        return gson.fromJson(json, listType);
-    }
-
-
-    public static class MyTask extends AsyncTask<Void, Void, Void> {
-
-        static final String URL_STRING =
-                "https://official-joke-api.herokuapp.com/random_ten";
-        String response;
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-
-//            progressBar.setVisibility(View.VISIBLE);
-
-
-
-        }
-
-        @Override
-        protected Void doInBackground(Void... params) {
-
-            response = creatingURLConnection(URL_STRING);
-            return null;
-
-
-        }
-
-        @Override
-        protected void onPostExecute(Void result) {
-            super.onPostExecute(result);
-
-            json = response;
-
-//            progressBar.setVisibility(View.INVISIBLE);
-        }
-    }
-
-    public static String creatingURLConnection (String GET_URL) {
-        String response = "";
-        HttpURLConnection conn ;
+        HttpURLConnection urlConnection = null;
+        List<Joke> result = null;
         StringBuilder jsonResults = new StringBuilder();
+
         try {
-            //setting URL to connect with
-            URL url = new URL(GET_URL);
-            //creating connection
-            conn = (HttpURLConnection) url.openConnection();
-            /*
-            converting response into String
-            */
-            InputStreamReader in = new InputStreamReader(conn.getInputStream());
+            URL url = new URL(String.format("%s%s", BASE_URL, "/random_ten"));
+
+            urlConnection = (HttpURLConnection) url.openConnection();
+
+//            InputStream in = new BufferedInputStream(urlConnection.getInputStream());
+            InputStreamReader in = new InputStreamReader(urlConnection.getInputStream());
             int read;
             char[] buff = new char[1024];
             while ((read = in.read(buff)) != -1) {
                 jsonResults.append(buff, 0, read);
             }
-            response = jsonResults.toString();
-        }catch(Exception e){
+            json = jsonResults.toString();
+
+
+
+//            InputStreamReader in = new InputStreamReader(urlConnection.getInputStream());
+
+            Gson gson = new Gson();
+
+
+//            Reader reader = new InputStreamReader(in, "UTF-8");
+
+            Type listType = new TypeToken<ArrayList<Joke>>(){}.getType();
+
+//            result = gson.fromJson(reader, listType);
+            result = gson.fromJson(json, listType);
+
+        } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+
+            if (urlConnection != null)
+                urlConnection.disconnect();
         }
-        return response;
+        return result;
     }
+
 
 
 }

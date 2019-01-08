@@ -1,36 +1,33 @@
 package com.example.tester3.laba7_8.ui.activities;
 
-import android.content.res.AssetManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 import com.example.tester3.laba7_8.R;
 import com.example.tester3.laba7_8.data.Impl.RepositoryImpl;
 import com.example.tester3.laba7_8.data.Repository;
 import com.example.tester3.laba7_8.models.Joke;
 import com.example.tester3.laba7_8.ui.adapters.JokesAdapter;
-import org.json.JSONArray;
 
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
-import static android.os.AsyncTask.Status.FINISHED;
+public class MainActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
 
-public class MainActivity extends AppCompatActivity {
+    MyTask mt;
 
-    RepositoryImpl.MyTask mt;
+    private static ProgressBar progressBar;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
-    private ProgressBar progressBar;
     private List<Joke> listJokes = new ArrayList<>();
+
+//    public static final int STATUS_TASK_PRE = 0;
+//    public static final int STATUS_TASK_POST = 1;
 
     RecyclerView recyclerView;
     //https://official-joke-api.herokuapp.com/random_ten
@@ -42,101 +39,147 @@ public class MainActivity extends AppCompatActivity {
 
         progressBar = findViewById(R.id.progress_bar);
         recyclerView = findViewById(R.id.jokes_list);
+        swipeRefreshLayout = findViewById(R.id.swipe_container);
+
+//        updateResults();
+
+        swipeRefreshLayout.setRefreshing(true);
+
+        swipeRefreshLayout.setOnRefreshListener(this); // THIS???
+
+    }
+
+
+    @Override
+    public void onRefresh() {
+
+//        cancelTask();
+//        listJokes.clear();
+//
+//
+//        Repository repository = new RepositoryImpl(this);
+//
+//        mt = new MyTask(repository, jokes -> {
+//            if (jokes != null) {
+//                for (Joke i : repository.getJokes()) {
+//                    listJokes.add(i);
+//                }
+//            }
+//        });
+//        mt.execute();
+//
+//        if (repository.getJokes() != null) {
+//            for (Joke i : repository.getJokes()) {
+//                listJokes.add(i);
+//            }
+//        }
+////        if (result != null) {
+////            for (Joke i : result) {
+////                listJokes.add(i);
+////            }
+////        }
+//
+//        for (Joke i : repository.getJokes()) {
+//            System.out.println(i);
+//        }
+//
+//
+//        JokesAdapter adapter = new JokesAdapter(this, listJokes);
+//
+//        recyclerView.setAdapter(adapter);
+
+
+
+        updateResults();
+        swipeRefreshLayout.setRefreshing(false);
+    }
+
+
+//    private static void updateProgressBar(int statusTask) {
+//
+//        if (statusTask == STATUS_TASK_PRE) {
+//            progressBar.setVisibility(View.VISIBLE);
+//        }
+//        if (statusTask == STATUS_TASK_POST) {
+//            progressBar.setVisibility(View.INVISIBLE);
+//        }
+//
+//    }
+
+
+    private void updateResults() {
+        cancelTask();
+        listJokes.clear();
+
 
         Repository repository = new RepositoryImpl(this);
 
+        mt = new MyTask(repository, jokes -> {
+            if (jokes != null) {
+                for (Joke i : jokes) {
+                    listJokes.add(i);
+                }
 
-        mt = new RepositoryImpl.MyTask();
+                for (Joke i : jokes) {
+                    System.out.println("///////////////////////////" + i);
+                }
+            }
+
+        });
         mt.execute();
 
-//        progressBar.setVisibility(View.VISIBLE);
-//
-//        while (mt.getStatus() != FINISHED) {
-//            progressBar.setVisibility(View.VISIBLE);
-//        }
-//
-        progressBar.setVisibility(View.VISIBLE);
-
-        Joke joke = new Joke("type", "setup", "punchline");
-        listJokes.add(joke);
-
-        if (repository.getJokes() != null) {
-            for (Joke i : repository.getJokes()) { //TODO why repository.getJokes() null?
-                listJokes.add(i);
-            }
-        }
-//        listJokes = repository.getJokes();
 
         JokesAdapter adapter = new JokesAdapter(this, listJokes);
 
         recyclerView.setAdapter(adapter);
-
-
     }
 
-//    public class MyTask extends AsyncTask<Void, Void, Void> {
-//
+
+    private void cancelTask() {
+
+        if (mt == null)
+            return;
+
+        mt.cancel(true);
+        mt = null;
+    }
+
+
+    public static class MyTask extends AsyncTask<List<Joke>, Void, List<Joke>> {
+
 //        static final String URL_STRING =
 //                "https://official-joke-api.herokuapp.com/random_ten";
 //        String response;
-//        Repository repository = new RepositoryImpl(MainActivity.this);
-//
-//        @Override
-//        protected void onPreExecute() {
-//            super.onPreExecute();
-//
-//            progressBar.setVisibility(View.VISIBLE);
-//
-//
-//        }
-//
-//        @Override
-//        protected Void doInBackground(Void... params) {
-//            //                TimeUnit.SECONDS.sleep(2);
-//
-//            response = creatingURLConnection(URL_STRING);
-//            return null;
-//
-//            //TODO ?
-//
-//
-//        }
-//
-//        @Override
-//        protected void onPostExecute(Void result) {
-//            super.onPostExecute(result);
-//
-//
-//            //TODO transfer response to data.json
-//
-//            repository.getJokes(response);
-//
-//            progressBar.setVisibility(View.INVISIBLE);
-//        }
-//    }
-//
-//    public String creatingURLConnection (String GET_URL) {
-//        String response = "";
-//        HttpURLConnection conn ;
-//        StringBuilder jsonResults = new StringBuilder();
-//        try {
-//            //setting URL to connect with
-//            URL url = new URL(GET_URL);
-//            //creating connection
-//            conn = (HttpURLConnection) url.openConnection();
-//            /*
-//            converting response into String
-//            */
-//            InputStreamReader in = new InputStreamReader(conn.getInputStream());
-//            int read;
-//            char[] buff = new char[1024];
-//            while ((read = in.read(buff)) != -1) {
-//                jsonResults.append(buff, 0, read);
-//            }
-//            response = jsonResults.toString();
-//        }catch(Exception e){
-//            e.printStackTrace();
-//        }
-//        return response;
-//    }
+        private final Repository repository;
+        private final OnUpdateJokesCallback callback;
+
+        interface OnUpdateJokesCallback {
+
+            void updateJokes(List<Joke> jokes);
+        }
+
+        public MyTask (Repository repository, OnUpdateJokesCallback callback) {
+            this.repository = repository;
+            this.callback = callback;
+        }
+
+        @Override
+        protected List<Joke> doInBackground(List<Joke>... lists) {
+            return repository.getJokes();
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+//            updateProgressBar(STATUS_TASK_PRE);
+        }
+
+        @Override
+        protected void onPostExecute(List<Joke> result) {
+            super.onPostExecute(result);
+//            updateProgressBar(STATUS_TASK_POST);
+            callback.updateJokes(result);
+        }
+    }
+
 }

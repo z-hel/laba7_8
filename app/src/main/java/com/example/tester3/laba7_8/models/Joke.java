@@ -1,12 +1,14 @@
 package com.example.tester3.laba7_8.models;
 
+import java.util.List;
+
 public class Joke {
 
-    public Joke (String type, String setup, String punchline) {
-        this.type = type;
-        this.setup = setup;
-        this.punchline = punchline;
-    }
+//    public Joke (String type, String setup, String punchline) {
+//        this.type = type;
+//        this.setup = setup;
+//        this.punchline = punchline;
+//    }
 
     public String getType() { return type; }
 
