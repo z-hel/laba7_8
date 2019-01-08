@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">Jokes</string>
     <string name="todo">TODO</string>
+    <string name="ok">Ok</string>
+    <string name="dialog_message_network_is_not_available">The results could not be displayed. Check your network connection</string>
+    <string name="dialog_title_network_is_not_available">Internet connection error</string>
+    <string name="dialog_message_long_time">Request timed out</string>
+    <string name="dialog_title_long_time">Time out</string>
 </resources>
