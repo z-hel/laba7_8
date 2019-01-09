@@ -61,9 +61,11 @@ public class MainActivity extends AppCompatActivity  { //implements SwipeRefresh
                 updateResults();
 
                 swipeRefreshLayout.postDelayed(() -> {
-                    swipeRefreshLayout.setRefreshing(false);
+                    if (listJokes.size() == 0) {
+                        swipeRefreshLayout.setRefreshing(false);
 
-                    popupError(R.string.dialog_message_long_time, R.string.dialog_title_long_time);
+                        popupError(R.string.dialog_message_long_time, R.string.dialog_title_long_time);
+                    }
                 }, 20000);
 
 
@@ -139,14 +141,14 @@ public class MainActivity extends AppCompatActivity  { //implements SwipeRefresh
                     }
 
                 }
+                JokesAdapter adapter = new JokesAdapter(this, listJokes);
+
+                recyclerView.setAdapter(adapter);
 
             });
             mt.execute();
 
 
-            JokesAdapter adapter = new JokesAdapter(this, listJokes);
-
-            recyclerView.setAdapter(adapter);
         }
 
 
