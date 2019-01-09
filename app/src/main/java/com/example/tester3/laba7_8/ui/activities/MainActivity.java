@@ -12,6 +12,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.view.View;
 import android.widget.ProgressBar;
 import com.example.tester3.laba7_8.R;
@@ -32,6 +33,8 @@ public class MainActivity extends AppCompatActivity  { //implements SwipeRefresh
     public static List<Joke> listJokes = new ArrayList<>();
 
 
+    SearchView search;
+
     RecyclerView recyclerView;
     //https://official-joke-api.herokuapp.com/random_ten
 
@@ -42,16 +45,18 @@ public class MainActivity extends AppCompatActivity  { //implements SwipeRefresh
 
         recyclerView = findViewById(R.id.jokes_list);
         swipeRefreshLayout = findViewById(R.id.swipe_container);
+        search = findViewById(R.id.search);
 
 
 //        listJokes.add(new Joke("type", "setup", "punchline"));
 
 
+//        updateResults();
+
+        swipeRefreshLayout.setRefreshing(true);
         updateResults();
+//        swipeRefreshLayout.setRefreshing(false);
 
-//        swipeRefreshLayout.setRefreshing(true);
-
-//        swipeRefreshLayout.setOnRefreshListener(this::onRefresh);
         swipeRefreshLayout.setOnRefreshListener(() -> {
 
             swipeRefreshLayout.setRefreshing(true);
@@ -59,14 +64,6 @@ public class MainActivity extends AppCompatActivity  { //implements SwipeRefresh
             if (isNetworkAvailable()) {
 
                 updateResults();
-
-                swipeRefreshLayout.postDelayed(() -> {
-                    if (listJokes.size() == 0) {
-                        swipeRefreshLayout.setRefreshing(false);
-
-                        popupError(R.string.dialog_message_long_time, R.string.dialog_title_long_time);
-                    }
-                }, 20000);
 
 
             } else if (!isNetworkAvailable()) {
@@ -79,33 +76,12 @@ public class MainActivity extends AppCompatActivity  { //implements SwipeRefresh
         });
 
 
+//        search.setOnSearchClickListener(v-> {
+//
+//        });
+
+
         }
-
-
-//        @Override
-//        public void onRefresh () {
-//
-//            swipeRefreshLayout.setRefreshing(true);
-//
-//            if (isNetworkAvailable()) {
-//
-//                updateResults();
-//
-//                swipeRefreshLayout.postDelayed(() -> {
-//                    swipeRefreshLayout.setRefreshing(false);
-//
-//                    popupError(R.string.dialog_message_long_time, R.string.dialog_title_long_time);
-//                }, 5000);
-//
-//
-//            } else if (!isNetworkAvailable()) {
-//
-//                swipeRefreshLayout.setRefreshing(false);
-//
-//                popupError(R.string.dialog_message_network_is_not_available, R.string.dialog_title_network_is_not_available);
-//            }
-//
-//        }
 
         public void popupError ( int dialog_message, int dialog_title){
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -136,14 +112,31 @@ public class MainActivity extends AppCompatActivity  { //implements SwipeRefresh
 
             mt = new MyTask(repository, jokes -> {
                 if (jokes != null) {
-                    for (Joke i : jokes) {
-                        listJokes.add(i);
+                    if (jokes.get(0).getId() != "timeout") {
+                        for (Joke i : jokes) {
+                            listJokes.add(i);
+                        }
+                    }
+                    else {
+                        swipeRefreshLayout.setRefreshing(false);
+                        popupError(R.string.dialog_message_long_time, R.string.dialog_title_long_time);
                     }
 
                 }
+                else {
+
+                    swipeRefreshLayout.setRefreshing(false);
+
+                    popupError(R.string.dialog_message_server_not_available, R.string.dialog_title_server_not_available);
+
+                }
+
+
                 JokesAdapter adapter = new JokesAdapter(this, listJokes);
 
                 recyclerView.setAdapter(adapter);
+
+                swipeRefreshLayout.setRefreshing(false);
 
             });
             mt.execute();

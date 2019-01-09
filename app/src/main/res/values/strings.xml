@@ -6,4 +6,6 @@
     <string name="dialog_title_network_is_not_available">Internet connection error</string>
     <string name="dialog_message_long_time">Request timed out</string>
     <string name="dialog_title_long_time">Time out</string>
+    <string name="dialog_message_server_not_available">The service is not available. Try again later</string>
+    <string name="dialog_title_server_not_available">Server is not available</string>
 </resources>

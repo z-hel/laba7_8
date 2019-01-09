@@ -24,10 +24,10 @@ public class JokesViewHolder extends RecyclerView.ViewHolder {
 
     }
 
-    public void bind(Joke joke) {
+    public void bind(Joke joke, int position) {
 
-        type.setText(joke.getType());
-        setup.setText(joke.getSetup());
-        punchline.setText(joke.getPunchline());
+        type.setText(String.format("№ %d. %s", position + 1, joke.getType()));
+        setup.setText(String.format("- %s", joke.getSetup()));
+        punchline.setText(String.format("- %s", joke.getPunchline()));
     }
 }

@@ -43,15 +43,25 @@ public class RepositoryImpl implements Repository {
 
             urlConnection = (HttpURLConnection) url.openConnection();
 
-//            InputStream in = new BufferedInputStream(urlConnection.getInputStream());
-            InputStreamReader in = new InputStreamReader(urlConnection.getInputStream());
-            int read;
-            char[] buff = new char[1024];
-            while ((read = in.read(buff)) != -1) {
-                jsonResults.append(buff, 0, read);
-            }
-            json = jsonResults.toString();
+            urlConnection.setConnectTimeout(10000);
 
+            int response = urlConnection.getResponseCode();
+            if (response == HttpURLConnection.HTTP_OK) {
+
+
+//            InputStream in = new BufferedInputStream(urlConnection.getInputStream());
+                InputStreamReader in = new InputStreamReader(urlConnection.getInputStream());
+                int read;
+                char[] buff = new char[1024];
+                while ((read = in.read(buff)) != -1) {
+                    jsonResults.append(buff, 0, read);
+                }
+
+            } else if (response == HttpURLConnection.HTTP_GATEWAY_TIMEOUT || response == HttpURLConnection.HTTP_CLIENT_TIMEOUT) {
+                jsonResults = new StringBuilder("timeout");
+            }
+
+            json = jsonResults.toString();
 
 
 //            InputStreamReader in = new InputStreamReader(urlConnection.getInputStream());
@@ -61,10 +71,12 @@ public class RepositoryImpl implements Repository {
 
 //            Reader reader = new InputStreamReader(in, "UTF-8");
 
-            Type listType = new TypeToken<ArrayList<Joke>>(){}.getType();
+            Type listType = new TypeToken<ArrayList<Joke>>() {
+            }.getType();
 
 //            result = gson.fromJson(reader, listType);
             result = gson.fromJson(json, listType);
+
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -75,7 +87,6 @@ public class RepositoryImpl implements Repository {
         }
         return result;
     }
-
 
 
 }

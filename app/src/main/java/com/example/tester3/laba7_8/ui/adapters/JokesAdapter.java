@@ -32,7 +32,7 @@ public class JokesAdapter extends RecyclerView.Adapter<JokesViewHolder>{
 
     @Override
     public void onBindViewHolder(@NonNull JokesViewHolder jokesViewHolder, int position) {
-        jokesViewHolder.bind(listJokes.get(position));
+        jokesViewHolder.bind(listJokes.get(position), position);
     }
 
     @Override
