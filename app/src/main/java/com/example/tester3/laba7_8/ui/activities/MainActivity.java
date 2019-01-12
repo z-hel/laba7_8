@@ -40,7 +40,9 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
     SearchView searchView;
 
-    RecyclerView recyclerView;
+    public static RecyclerView recyclerView;
+
+    JokesAdapter adapter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -116,7 +118,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
             JokesAdapter adapter = new JokesAdapter(this, matchesSearchListJokes);
 
-
             recyclerView.setAdapter(adapter);
 
             if (query.isEmpty() || !matchesSearchListJokes.isEmpty()) {
@@ -153,9 +154,11 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         cancelTask();
         listJokes.clear();
 
-        if (searchEmptyError.getVisibility() == View.VISIBLE)
-            searchEmptyError.setVisibility(View.INVISIBLE);
 
+        recyclerView.getRecycledViewPool().clear();
+        if (adapter != null) {
+            adapter.notifyDataSetChanged();
+        }
 
         Repository repository = new RepositoryImpl(this);
 
@@ -165,6 +168,16 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                     for (Joke i : jokes) {
                         listJokes.add(i);
                     }
+
+                    searchView.setQuery("", false);
+
+                    if (searchEmptyError.getVisibility() == View.VISIBLE)
+                        searchEmptyError.setVisibility(View.INVISIBLE);
+
+                    adapter = new JokesAdapter(this, listJokes);
+
+                    recyclerView.setAdapter(adapter);
+
                 } else {
                     swipeRefreshLayout.setRefreshing(false);
                     popupError(R.string.dialog_message_long_time, R.string.dialog_title_long_time);
@@ -179,9 +192,10 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             }
 
 
-            JokesAdapter adapter = new JokesAdapter(this, listJokes);
-
-            recyclerView.setAdapter(adapter);
+//            JokesAdapter adapter = new JokesAdapter(this, listJokes);
+//
+//
+//            recyclerView.setAdapter(adapter);
 
             swipeRefreshLayout.setRefreshing(false);
 
