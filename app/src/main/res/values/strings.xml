@@ -8,4 +8,5 @@
     <string name="dialog_title_long_time">Time out</string>
     <string name="dialog_message_server_not_available">The service is not available. Try again later</string>
     <string name="dialog_title_server_not_available">Server is not available</string>
+    <string name="search_list_empty_error">Nothing found for this query</string>
 </resources>

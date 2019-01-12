@@ -7,7 +7,6 @@ public class Joke {
         this.type = type;
         this.setup = setup;
         this.punchline = punchline;
-        this.id = id;
     }
 
     public String getType() { return type; }
@@ -20,11 +19,9 @@ public class Joke {
         return punchline;
     }
 
-    public String getId() { return id; }
 
     private String type;
     private String setup;
     private String punchline;
-    private String id;
 
 }

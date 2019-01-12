@@ -49,7 +49,6 @@ public class RepositoryImpl implements Repository {
             if (response == HttpURLConnection.HTTP_OK) {
 
 
-//            InputStream in = new BufferedInputStream(urlConnection.getInputStream());
                 InputStreamReader in = new InputStreamReader(urlConnection.getInputStream());
                 int read;
                 char[] buff = new char[1024];
@@ -64,17 +63,13 @@ public class RepositoryImpl implements Repository {
             json = jsonResults.toString();
 
 
-//            InputStreamReader in = new InputStreamReader(urlConnection.getInputStream());
-
             Gson gson = new Gson();
 
 
-//            Reader reader = new InputStreamReader(in, "UTF-8");
 
             Type listType = new TypeToken<ArrayList<Joke>>() {
             }.getType();
 
-//            result = gson.fromJson(reader, listType);
             result = gson.fromJson(json, listType);
 
 
